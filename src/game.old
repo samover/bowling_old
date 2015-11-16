@@ -1,0 +1,119 @@
+function Game() {
+  this._frameNumber = 1;
+  this.scoreCard = this.createScoreCard();
+}
+
+Game.prototype.showFrameNumber = function() {
+  return this._frameNumber;
+};
+
+Game.prototype.showScore = function() {
+  var score = 0;
+
+  for(var i = 1; i <= 10; i++) {
+    score += this.scoreOfFrame(i); 
+  }
+
+  return score;
+};
+
+Game.prototype.pinsStanding = function(frameNumber) {
+  return this.scoreCard[frameNumber - 1].pinsStanding;
+};
+
+Game.prototype.createScoreCard = function() {
+  var scoreCard = [];
+
+  for(var i = 0; i < 10; i++) {
+    scoreCard.push({rollOne: -1, rollTwo: -1, pinsStanding: 10}); 
+  }
+
+  return scoreCard;
+};
+
+Game.prototype.rollBall = function() {
+  var knockedDownPins = Math.floor(Math.random() * 
+                                   this.pinsStanding(this._frameNumber) + 1);
+  this._registerRoll(knockedDownPins);
+  return knockedDownPins;
+};
+
+Game.prototype.showRollOne = function(frameNumber) {
+  frameNumber = typeof frameNumber !== 'undefined' ? frameNumber : 
+    this._frameNumber;
+    return this.scoreCard[frameNumber - 1].rollOne;
+};
+
+Game.prototype.setRollOne = function(knockedDownPins) { 
+  this.scoreCard[this._frameNumber - 1].pinsStanding -= knockedDownPins;
+  this.scoreCard[this._frameNumber - 1].rollOne = knockedDownPins;
+};
+
+Game.prototype.showRollTwo = function(frameNumber) {
+  frameNumber = typeof frameNumber !== 'undefined' ? frameNumber : this._frameNumber;
+  return this.scoreCard[frameNumber - 1].rollTwo;
+};
+
+Game.prototype.setRollTwo = function(knockedDownPins) { 
+  this.scoreCard[this._frameNumber - 1].pinsStanding -= knockedDownPins;
+  this.scoreCard[this._frameNumber - 1].rollTwo = knockedDownPins;
+};
+
+Game.prototype._registerRoll = function(knockedDownPins){
+  if(this.showRollOne() === -1) { 
+    this.setRollOne(knockedDownPins);
+    if (knockedDownPins === 10 && this._frameNumber !== 10) { 
+      this.setRollTwo(0);
+      this._frameNumber ++;
+    }
+    else if(knockedDownPins === 10 && this._frameNumber === 10) {
+      this.scoreCard[this._frameNumber - 1].pinsStanding = 10; 
+    }
+  }
+  else if (this.showRollTwo() === -1) { 
+    this.setRollTwo(knockedDownPins); 
+
+    if(this.pinsStanding(10) === 0 && this._frameNumber === 10) {
+      this.scoreCard[this._frameNumber - 1].pinsStanding = 10; 
+      this.scoreCard[this._frameNumber - 1].rollThree = -1;
+    }
+  }
+  else if(this.showRoll)
+  else { 
+    this._frameNumber ++;
+    this._registerRoll(knockedDownPins);
+  }
+};
+
+Game.prototype.gameStatus = function() {
+  for(var i = 1; i < 10 ; i++) {
+    if(this.showRollOne(i) === -1) { return 'Frame ' + i + ', Roll 1'; }
+    if(this.showRollTwo(i) === -1) { return 'Frame ' + i + ', Roll 2'; }
+  }
+
+  if(this.showRollOne(10) === -1) { return 'Frame 10, Roll 1'; }
+  if(this.showRollTwo(10) === -1) { return 'Frame 10, Roll 2'; }
+  if(this.showRollTwo(10) !== -1) { return 'Game Over'; }
+};
+
+Game.prototype._isFrameUnfinished = function(frameNumber) {
+  return this.showRollOne(frameNumber) === -1 || 
+    this.showRollTwo(frameNumber) === -1;
+};
+
+Game.prototype.scoreOfFrame = function(frameNumber)  {
+  var score = this.showRollOne(frameNumber) + this.showRollTwo(frameNumber);
+
+  if(this._isFrameUnfinished(frameNumber)) { return 0; }
+
+  if(score === 10) { 
+    if(this.showRollTwo(frameNumber) === 0) { 
+      return score += this.scoreOfFrame(frameNumber + 1);
+    } else {
+      return score += this.showRollOne(frameNumber + 1);
+    }
+  }
+
+  return score;
+};
+
