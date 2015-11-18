@@ -13,11 +13,13 @@ module.exports = function(grunt){
         summary: true,
       }
     }
-});
+  });
 
-grunt.loadNpmTasks('grunt-contrib-jshint');
-grunt.loadNpmTasks('grunt-contrib-jasmine');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-jasmine');
 
-grunt.registerTask('default', ['jasmine']);
+  grunt.registerTask('default', ['jasmine']);
 
 };
+
+
