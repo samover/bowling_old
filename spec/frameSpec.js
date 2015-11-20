@@ -17,6 +17,8 @@ describe('Frame', function() {
       frame = new Frame(10);
       expect(strikeFrame.rolls).toEqual([10]);
     });
+      
+
   });
 
   describe('#isOver', function() {
