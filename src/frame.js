@@ -1,20 +1,41 @@
-function Frame(roll1, roll2) {
-  this.rolls = [roll1];
-  if(roll2 !== undefined) { this.rolls.push(roll2); }
+function Frame(options) {
+  this.frameIndex = options.frameIndex;
+  this.rollIndex = options.rollIndex;
+  this.pins = 0;
+  this.turns = 0;
 }
 
 Frame.prototype.isOver = function() {
-  return (this.rolls.length === 2 || this.isStrike());
+  if(this.isLastFrame()) {
+    return this.isLastFrameOver();
+  } else {
+    return (this.turns === 2 || this.isStrike());
+  }
 };
+
+Frame.prototype.isLastFrameOver = function() {
+  return (this.turns === 2 && !this.isSpare()) && this.pins !== 20 ||
+          this.turns === 3;
+}
+
+Frame.prototype.addRoll = function(roll) {
+  this.pins += roll;
+  this.turns ++;
+}
+
+Frame.prototype.bonus = function() {
+  if(this.isStrike()) { return [ this.rollIndex + 1, this.rollIndex + 2]; }
+  if(this.isSpare()) { return [this.rollIndex + 2] }
+}
 
 Frame.prototype.isStrike = function() {
-  return (this.rolls.length === 1 && this.rolls[0] === 10);
-};
+  return (this.turns === 1 && this.pins === 10);
+}
 
 Frame.prototype.isSpare = function() {
-  return (this.rolls.length === 2 && this.sum() === 10);
-};
+  return (this.turns === 2 && this.pins === 10);
+}
 
-Frame.prototype.sum = function() {
-  return this.rolls.reduce(function(a, b) { return a + b; });
-};
+Frame.prototype.isLastFrame = function () {
+  return this.frameIndex === 9;
+}

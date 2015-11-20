@@ -15,7 +15,7 @@ Score.prototype.getBonus = function() {
   var bonus = this.bonus;
   var frames = this.frames;
   var rolls = this._getRolls();
- 
+
   rolls.forEach(function(roll, index) {
     if(roll === 10) {
       bonus.push(rolls[index+1]);
@@ -24,7 +24,8 @@ Score.prototype.getBonus = function() {
   });
 
   this.frames.forEach(function(frame, index) {
-    if(frame.rolls[0] + frame.rolls[1] === 10  && 
+    if(frame.isSpare()) { console.log('hello spare')};
+    if(frame.rolls[0] + frame.rolls[1] === 10  &&
        frames[index + 1] !== undefined) {
          bonus.push(frames[index + 1].rolls[0]);
        }
@@ -39,7 +40,7 @@ Score.prototype.calculateBonus = function() {
   if(this.bonus.length > 0 ) {
     return this.bonus.reduce(function(a, b) { return a + b; });
   } else {
-    return 0; 
+    return 0;
   }
 }
 
@@ -49,7 +50,7 @@ Score.prototype._getRolls = function() {
   this.frames.forEach(function(frame) {
     rolls.push(frame.rolls[0]);
     if(frame.rolls.length > 1) {
-      rolls.push(frame.rolls[1]);  
+      rolls.push(frame.rolls[1]);
     }
   });
 
